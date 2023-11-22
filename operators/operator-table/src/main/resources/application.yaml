@@ -1,0 +1,17 @@
+server:
+  port: 8081
+
+spring:
+  cloud:
+    nacos:
+      server-addr: 60.204.208.219:80
+  application:
+    name: operatorTableService
+
+
+logging:
+  level:
+    com.bdilab: debug
+  pattern:
+    dateformat: MM-dd HH:mm:ss:SSS
+

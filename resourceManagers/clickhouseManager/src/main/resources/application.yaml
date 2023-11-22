@@ -1,0 +1,20 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    jdbc-url: jdbc:clickhouse://60.204.155.55:8123/default
+    username: default
+    password: bdilab@1308
+    driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
+  cloud:
+    nacos:
+      server-addr: 60.204.208.219:80
+  application:
+    name: clickhouseManagerService
+
+logging:
+  level:
+    com.bdilab: info
+  pattern:
+    dateformat: MM-dd HH:mm:ss:SSS
