@@ -48,7 +48,7 @@ public class DagNode {
   /**
    * For fastjson serialize.
    */
-  private DagNode() {
+  protected DagNode() {
   }
 
   /**
