@@ -37,6 +37,11 @@ public class ClickhouseManagerController {
     @PostMapping("/getTableMatadata")
     public Map<String,String>  getTableMatadata(String tableName){
         return clickHouseJdbcUtils.getTableMatadata(tableName);
+    }
+
+    @PostMapping("/batchDeleteViews")
+    public boolean batchDeleteViews(List<String> viewNames){
+        return clickHouseJdbcUtils.batchDeleteViews(viewNames);
 
     }
 }

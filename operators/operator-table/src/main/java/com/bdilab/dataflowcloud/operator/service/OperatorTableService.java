@@ -1,22 +1,19 @@
 package com.bdilab.dataflowcloud.operator.service;
 
-
 import com.alibaba.fastjson.JSONObject;
+import com.bdilab.dataflowCloud.clickhouseClient.ClickhouseManagerClient;
 import com.bdilab.dataflowCloud.operator.dto.jobOutputData.OperatorOutputData;
 import com.bdilab.dataflowCloud.operator.dto.jobOutputData.OutputData;
 import com.bdilab.dataflowCloud.operator.dto.jobOutputData.OutputStateEnum;
 import com.bdilab.dataflowCloud.operator.service.OperatorService;
-import com.bdilab.dataflowcloud.operator.client.ClickhouseManagerClient;
 import com.bdilab.dataflowcloud.operator.dto.jobdescription.TableDescription;
 import com.bdilab.dataflowcloud.operator.generator.TableSqlGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 
 @Service

@@ -54,7 +54,6 @@ public class FastJson2JsonRedisSerialize<T> implements RedisSerializer<T> {
     }
     String str = new String(bytes, DEFAULT_CHARSET);
     try {
-//      log.debug("Object string: {}", str);
       return (T) JSON.parseObject(str, clazz);
     }
     catch (JSONException jsonException) {

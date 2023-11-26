@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +84,21 @@ public class ClickHouseJdbcUtils {
   public Long getCount(String sql) {
     String countSql = "select count(*) from (" + sql + ")";
     return ckJdbcTemplate.queryForObject(countSql, Long.class);
+  }
+
+  /**
+   *
+   */
+  public boolean batchDeleteViews(List<String> viewNames){
+    String sql = "drop view ";
+    List<String> sqls = new ArrayList<>();
+    for (String viewName : viewNames ) {
+      sqls.add(sql+viewName);
+    }
+
+    int[] ints = ckJdbcTemplate.batchUpdate(sqls.toArray(new String[0]));
+
+    return true;
   }
 
 }

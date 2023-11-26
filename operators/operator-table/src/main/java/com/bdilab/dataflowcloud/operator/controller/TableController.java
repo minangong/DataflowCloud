@@ -27,5 +27,4 @@ public class TableController {
 
         return operatorTableService.executeOperator(JSONObject.parseObject(jobDescription), saveTableName, new ArrayList<Object>());
     }
-
 }

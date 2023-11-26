@@ -65,31 +65,4 @@ public class RedisConfig {
     redisTemplate.afterPropertiesSet();
     return redisTemplate;
   }
-
-  /**
-   * description 配置事务管理器
-   **/
-//  @Bean
-//  public PlatformTransactionManager transactionManager(DataSource dataSource){
-//    return new DataSourceTransactionManager(dataSource);
-//  }
-
-  /**
-   * cacheManager.
-   */
-  @Bean
-  public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-    RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();
-    config = config.entryTtl(Duration.ofMinutes(5))
-        .serializeKeysWith(RedisSerializationContext.SerializationPair
-            .fromSerializer(new StringRedisSerializer()))
-        .serializeValuesWith(RedisSerializationContext.SerializationPair
-            .fromSerializer(fastJson2JsonRedisSerialize()))
-        .disableCachingNullValues();
-    return RedisCacheManager
-        .builder(redisConnectionFactory)
-        .cacheDefaults(config)
-        .transactionAware()
-        .build();
-  }
 }

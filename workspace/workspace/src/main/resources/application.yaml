@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 14001
 
 spring:
   cloud:
@@ -7,16 +7,23 @@ spring:
       server-addr: 60.204.208.219:80
   application:
     name: workspaceService
+
   redis:
     host: 60.204.208.219
     port: 6379
     timeout: 50000
+    password: mng
     lettuce:
       pool:
         max-active: 200
         max-wait: -1
         max-idle: 50
         min-idle: 5
+  datasource:
+    url: jdbc:mysql://60.204.208.219:3306/dataflow?useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: bdilab@1308
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
 logging:
   level:

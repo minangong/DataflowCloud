@@ -1,4 +1,4 @@
-package com.bdilab.dataflowcloud.operator.client;
+package com.bdilab.dataflowCloud.clickhouseClient;
 
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -23,4 +23,7 @@ public interface ClickhouseManagerClient {
 
     @PostMapping("/getTableMatadata")
     public Map<String,String>  getTableMatadata(@RequestParam String tableName);
+
+    @PostMapping("/batchDeleteViews")
+    public boolean batchDeleteViews(List<String> viewNames);
 }

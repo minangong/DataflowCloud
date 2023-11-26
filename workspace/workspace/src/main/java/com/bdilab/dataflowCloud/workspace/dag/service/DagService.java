@@ -1,9 +1,9 @@
 package com.bdilab.dataflowCloud.workspace.dag.service;
 
 
-import com.bdilab.dataflowCloud.workspace.dag.dto.DagNodeInputDto;
 import com.bdilab.dataflowCloud.workspace.dag.pojo.Dag;
 import com.bdilab.dataflowCloud.workspace.dag.pojo.DagNode;
+import com.bdilab.dataflowCloud.workspace.dag.pojo.DagNodeBuilder;
 
 /**
  * Only operate the dag and partial filter-records operations in Redis.
@@ -16,17 +16,14 @@ public interface DagService {
 
   Dag getDag(String workspaceId);
 
-  Dag addNode(String workspaceId, DagNodeInputDto dagNodeInputDto);
+  boolean addNode(String workspaceId, DagNodeBuilder dagNodeBuilder);
 
-  Dag addEdge(String workspaceId, String preNodeId, String nextNodeId, Integer slotIndex);
+  boolean addEdge(String workspaceId, String preNodeId, String nextNodeId, Integer slotIndex);
 
-  Dag removeNode(String workspaceId, String deletedNodeId);
+  boolean removeNode(String workspaceId, String deletedNodeId);
 
-  Dag removeEdge(String workspaceId, String preNodeId, String nextNodeId, Integer slotIndex);
+  boolean removeEdge(String workspaceId, String preNodeId, String nextNodeId, Integer slotIndex);
 
-  Dag updateNode(String workspaceId, String nodeId, Object nodeDescription);
-
-  Dag updateEdge(String workspaceId, String preNodeId, String nextNodeId,
-                 Integer slotIndex, String edgeType);
+  boolean updateNode(String workspaceId, String nodeId, Object nodeDescription);
 
 }

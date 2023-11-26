@@ -1,20 +1,27 @@
 package com.bdilab.dataflowCloud.workspace.dag.pojo;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.bdilab.dataflowCloud.workspace.dag.consts.CommonConstants;
 import com.bdilab.dataflowCloud.workspace.dag.enums.DagNodeState;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 
+@AllArgsConstructor
 public class DagNodeBuilder {
     private String nodeId;
     private String nodeType;
     private Object nodeDescription;
 
-    public DagNodeBuilder(String nodeId,String nodeType, Object nodeDescription){
+    private boolean isFromTable;
 
+    public DagNodeBuilder(){
 
     }
 
@@ -33,35 +40,52 @@ public class DagNodeBuilder {
         return this;
     }
 
+    public DagNodeBuilder isFromTable(boolean isFromTable){
+        this.isFromTable = isFromTable;
+        return this;
+
+    }
+
     public DagNode build(){
         DagNode dagNode = new DagNode();
 
-        boolean isReady = true;
-
         dagNode.setNodeId(this.nodeId);
+
         JSONArray dataSources =
-                ((JSONObject) dagNodeInputDto.getNodeDescription()).getJSONArray("dataSource");
-        this.inputDataSlots = new InputDataSlot[dataSources.size()];
+                ((JSONObject) nodeDescription).getJSONArray("dataSource");
+        dagNode.inputDataSlots = new InputDataSlot[dataSources.size()];
 
 
         for (int i = 0; i < dataSources.size(); i++) {
-            this.inputDataSlots[i] = new InputDataSlot(dataSources.getString(i));
-            if(StringUtils.isEmpty(dataSources.getString(i))) {
-                isReady = false;
-            }
+            dagNode.inputDataSlots[i] = new InputDataSlot(dataSources.getString(i));
         }
-        this.outputDataSlots = new ArrayList<>();
-        this.nodeType = dagNodeInputDto.getNodeType();
-        this.nodeDescription = dagNodeInputDto.getNodeDescription();
+        dagNode.outputDataSlots = new ArrayList<>();
+        dagNode.nodeType = nodeType;
+        dagNode.nodeDescription = nodeDescription;
 
-        if(isReady){
-            this.nodeState = DagNodeState.READY;
+        if(isFromTable){
+            dagNode.nodeState = DagNodeState.ALWAYS_SUCCEED;
         }else{
-            this.nodeState = DagNodeState.WAIT;
+            dagNode.nodeState = DagNodeState.WAIT;
         }
 
-        this.nodeDataResult = new String();
+        dagNode.nodeDataResult = CommonConstants.DATABASE +"."+ CommonConstants.TEMP_TABLE_PREFIX + this.nodeId;
 
+        return dagNode;
+
+    }
+
+    protected static DagNode convertNode(Object v) {
+        if (v == null) {
+            return null;
+        }
+        if (v instanceof DagNode) {
+            return (DagNode) v;
+        }
+        else if (v instanceof JSONObject) {
+            return ((JSONObject)v).toJavaObject(DagNode.class);
+        }
+        return JSON.parseObject(v.toString(), DagNode.class);
     }
 
 }

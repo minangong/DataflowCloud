@@ -1,14 +1,19 @@
-package com.bdilab.dataflowCloud.workspace.service.impl;
+package com.bdilab.dataflowCloud.workspace.dag.service.impl;
 
 
 
-import com.bdilab.dataflowCloud.workspace.dag.pojo.Dag;
+import com.bdilab.dataflowCloud.workspace.dag.enums.DagNodeState;
+import com.bdilab.dataflowCloud.workspace.dag.pojo.*;
 import com.bdilab.dataflowCloud.workspace.dag.service.DagService;
 import com.bdilab.dataflowCloud.workspace.dag.utils.redis.RedisUtils;
+import com.bdilab.dataflowCloud.workspace.exexute.service.DataSetService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Operate dag services in Redis.
@@ -32,71 +37,119 @@ import javax.annotation.Resource;
 public class DagServiceImpl implements DagService {
   @Resource
   RedisUtils redisUtils;
+  @Autowired
+  DataSetService dataSetService;
 
 
   @Override
-  public Dag addNode(String workspaceId, DagNodeInputDto dagNodeInputDto) {
-    Dag dag = getDag(workspaceId);
-    dag.getDagManipulateProxy().addNode(new DagNode(dagNodeInputDto));
-    redisUtils.hmset(workspaceId, dag.getDagMap());
-    log.info("Add node [{}] to [{}].", dagNodeInputDto.getNodeId(), workspaceId);
-    return dag;
+  public boolean addNode(String workspaceId, DagNodeBuilder dagNodeBuilder) {
+    DagNode dagNode = dagNodeBuilder.build();
+    redisUtils.hset(workspaceId,dagNode.getNodeId(),dagNode);
+    log.info("Add node [{}] to [{}].", dagNode.getNodeId(), workspaceId);
+    return true;
   }
 
   @Override
-  public Dag addEdge(String workspaceId, String preNodeId, String nextNodeId, Integer slotIndex) {
+  public boolean removeNode(String workspaceId, String deletedNodeId) {
     Dag dag = getDag(workspaceId);
-    dag.getDagManipulateProxy().addEdge(preNodeId, nextNodeId, slotIndex, dag);
-    redisUtils.hmset(workspaceId, dag.getDagMap());
+    DagNode deletedNode = dag.getDagNode(deletedNodeId);
+    //修改操作符状态 递归修改为Wait态
+    dag.getDagStateProxy().changeWaitState(deletedNode);
+    //删除前节点的next信息
+    for (int i = 0;  i < deletedNode.getInputDataSlots().length; i++) {
+      InputDataSlot inputDataSlot = deletedNode.getInputDataSlots()[i];
+      String preNodeId = inputDataSlot.getPreNodeId();
+      OutputDataSlot deletedSlot = new OutputDataSlot(deletedNodeId, i);
+      if (!StringUtils.isEmpty(preNodeId)) {
+        dag.getDagMap().get(preNodeId).getOutputDataSlots().remove(deletedSlot);
+      }
+    }
+    //删除后置节点的pre信息
+    for (OutputDataSlot outputDataSlot : deletedNode.getOutputDataSlots()) {
+      DagNode nextNode = dag.getDagNode(outputDataSlot.getNextNodeId());
+      nextNode.setPreNodeId(outputDataSlot.getNextSlotIndex(), null);
+      nextNode.setDataSource(outputDataSlot.getNextSlotIndex(), null);
+    }
+    //删除节点输出表！！！！
+    dataSetService.clearDagNodeView(deletedNode.getNodeDataResult());
+
+
+    //删除节点
+    dag.getDagMap().remove(deletedNodeId);
+
+
+    //更新redis
+    redisUtils.hdel(workspaceId, deletedNodeId);
+    redisUtils.hmset(workspaceId,dag.getDagMap());
+    log.info("Remove node [{}] in [{}].", deletedNodeId, workspaceId);
+    return true;
+  }
+
+  @Override
+  public boolean updateNode(String workspaceId, String nodeId, Object nodeDescription) {
+    Dag dag = getDag(workspaceId);
+    DagNode dagNode = dag.getDagNode(nodeId);
+    dagNode.setNodeDescription(nodeDescription);
+
+    //修改操作符状态 递归修改为Wait态   首节点判断是否Ready
+    dag.getDagStateProxy().changeWaitState(dagNode);
+    dag.getDagStateProxy().checkIfReady(dagNode);
+
+    //更新redis
+    redisUtils.hmset(workspaceId,dag.getDagMap());
+    log.info("Update node [{}] in [{}]", nodeId, workspaceId);
+    return true;
+  }
+  @Override
+  public boolean addEdge(String workspaceId, String preNodeId, String nextNodeId, Integer slotIndex) {
+    Dag dag = getDag(workspaceId);
+    DagNode preNode = dag.getDagNode(preNodeId);
+    DagNode nextNode = dag.getDagNode(nextNodeId);
+
+    //增加边信息
+    preNode.getOutputDataSlots().add(new OutputDataSlot(nextNodeId, slotIndex));
+    nextNode.setPreNodeId(slotIndex, preNodeId);
+    nextNode.setDataSource(slotIndex,preNode.getNodeDataResult());
+
+    //修改操作符状态 递归修改为Wait态   首节点判断是否Ready
+    dag.getDagStateProxy().changeWaitState(nextNode);
+    dag.getDagStateProxy().checkIfReady(nextNode);
+
+    //更新redis
+    redisUtils.hmset(workspaceId,dag.getDagMap());
+
     log.info("Add edge between [{}] to slot [{}] of [{}] in [{}].",
         preNodeId, slotIndex, nextNodeId, workspaceId);
-    return dag;
+
+    return true;
   }
 
-  @Override
-  public Dag removeNode(String workspaceId, String deletedNodeId) {
-    Dag dag = getDag(workspaceId);
-    dag.getDagManipulateProxy().removeNode(deletedNodeId, dag);
-    redisUtils.hdel(workspaceId, deletedNodeId);
-    redisUtils.hmset(workspaceId, dag.getDagMap());
-    log.info("Remove node [{}] in [{}].", deletedNodeId, workspaceId);
-    return dag;
-  }
 
   @Override
-  public Dag removeEdge(String workspaceId,
+  public boolean removeEdge(String workspaceId,
                         String preNodeId,
                         String nextNodeId,
                         Integer slotIndex) {
+
     Dag dag = getDag(workspaceId);
-    dag.getDagManipulateProxy().removeEdge(preNodeId, nextNodeId, slotIndex, dag);
-    redisUtils.hmset(workspaceId, dag.getDagMap());
-    log.info("Add edge between [{}] to slot [{}] of [{}] in [{}].",
+    DagNode preNode = dag.getDagNode(preNodeId);
+    DagNode nextNode = dag.getDagNode(nextNodeId);
+
+    preNode.getOutputDataSlots().remove(new OutputDataSlot(nextNodeId, slotIndex));
+    nextNode.setPreNodeId(slotIndex, null);
+    nextNode.setDataSource(slotIndex, null);
+
+    //修改操作符状态 递归修改为Wait态   首节点判断是否Ready
+    dag.getDagStateProxy().changeWaitState(nextNode);
+
+    //更新redis
+    redisUtils.hmset(workspaceId,dag.getDagMap());
+
+    log.info("remove edge between [{}] to slot [{}] of [{}] in [{}].",
         preNodeId, slotIndex, nextNodeId, workspaceId);
-    return dag;
+    return true;
   }
 
-  @Override
-  public Dag updateNode(String workspaceId, String nodeId, Object nodeDescription) {
-    Dag dag = getDag(workspaceId);
-    dag.getDagManipulateProxy().updateNode(nodeId, nodeDescription, dag);
-    redisUtils.hmset(workspaceId, dag.getDagMap());
-    log.info("Update node [{}] in [{}]", nodeId, workspaceId);
-    return dag;
-  }
-
-  @Override
-  public Dag updateEdge(String workspaceId,
-                        String preNodeId,
-                        String nextNodeId,
-                        Integer slotIndex,
-                        String edgeType) {
-    Dag dag = getDag(workspaceId);
-    dag.getDagManipulateProxy().updateEdge(preNodeId, nextNodeId, slotIndex, edgeType, dag);
-    redisUtils.hmset(workspaceId, dag.getDagMap());
-    log.info("Update the output edge of [{}] to [{}] in [{}]", preNodeId, edgeType, workspaceId);
-    return dag;
-  }
 
   @Override
   public DagNode getNode(String workspaceId, String nodeId) {
@@ -106,7 +159,5 @@ public class DagServiceImpl implements DagService {
   public Dag getDag(String workspaceId) {
 		return new Dag((redisUtils.hmget(workspaceId)));
   }
-
-
 
 }

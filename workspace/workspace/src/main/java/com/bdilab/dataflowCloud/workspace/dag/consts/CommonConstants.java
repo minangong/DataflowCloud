@@ -39,25 +39,13 @@ public class CommonConstants {
    * Clickhouse table prefix.
    */
   public static final String TEMP_TABLE_PREFIX = "temp_";
-  public static final String TEMP_INPUT_TABLE_PREFIX = "temp_input_";
-  public static final String CPL_TEMP_TABLE_PREFIX =
-      CommonConstants.DATABASE + "." + CommonConstants.TEMP_TABLE_PREFIX;
-  public static final String CPL_TEMP_INPUT_TABLE_PREFIX =
-      CommonConstants.DATABASE + "." + CommonConstants.TEMP_INPUT_TABLE_PREFIX;
 
-  public static final String MATERIALIZE_PREFIX = "materialize_";
-  public static final String CPL_MATERIALIZE_PREFIX =
-      CommonConstants.DATABASE + "." + CommonConstants.MATERIALIZE_PREFIX;
-  /**
-   * dataset部分 excel文件后缀.
-   */
-  public static final String CSV_SUFFIX = "CSV";
-  public static final String XLS_SUFFIX = "XLS";
-  public static final String XLSX_SUFFIX = "XLSX";
+
+  public static final String TABLE_PREFIX =
+      CommonConstants.DATABASE + "." + CommonConstants.TEMP_TABLE_PREFIX;
 
   /**
    * 建立webSocket连接时的通行码前缀.
    */
   public static final String WORKSPACE_PREFIX = "workspace-";
-  public static final String DASHBOARD_PREFIX = "dashboard-";
 }

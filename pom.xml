@@ -15,6 +15,7 @@
     <module>operators/operator-table</module>
     <module>operators/operator-common</module>
     <module>resourceManagers/clickhouseManager</module>
+    <module>feignClients</module>
   </modules>
 
   <parent>

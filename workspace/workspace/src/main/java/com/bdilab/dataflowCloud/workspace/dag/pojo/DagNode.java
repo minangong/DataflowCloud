@@ -3,7 +3,6 @@ package com.bdilab.dataflowCloud.workspace.dag.pojo;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.bdilab.dataflowCloud.workspace.dag.dto.DagNodeInputDto;
 import com.bdilab.dataflowCloud.workspace.dag.enums.DagNodeState;
 import lombok.Data;
 import org.springframework.util.StringUtils;
@@ -22,28 +21,28 @@ public class DagNode {
   /**
    * Unique identifier that cannot be repeated.
    */
-  private String nodeId;
+  protected String nodeId;
 
-  private InputDataSlot[] inputDataSlots;
+  protected InputDataSlot[] inputDataSlots;
 
   /**
    * The list containing the ID of the subsequent nodes.
    */
-  private List<OutputDataSlot> outputDataSlots;
+  protected List<OutputDataSlot> outputDataSlots;
 
-  private DagNodeState nodeState;
+  protected DagNodeState nodeState;
 
-  private String nodeDataResult;
+  protected String nodeDataResult;
 
   /**
    * The type of operator.
    */
-  private String nodeType;
+  protected String nodeType;
 
   /**
    * The description of the node job.
    */
-  private Object nodeDescription;
+  protected Object nodeDescription;
 
   /**
    * For fastjson serialize.
@@ -51,39 +50,7 @@ public class DagNode {
   protected DagNode() {
   }
 
-  /**
-   * Constructor.
-   *
-   * @param dagNodeInputDto dagNodeInputDto
-   */
-  public DagNode(DagNodeInputDto dagNodeInputDto) {
-    boolean isReady = true;
 
-    this.nodeId = dagNodeInputDto.getNodeId();
-    JSONArray dataSources =
-        ((JSONObject) dagNodeInputDto.getNodeDescription()).getJSONArray("dataSource");
-    this.inputDataSlots = new InputDataSlot[dataSources.size()];
-
-
-    for (int i = 0; i < dataSources.size(); i++) {
-      this.inputDataSlots[i] = new InputDataSlot(dataSources.getString(i));
-      if(StringUtils.isEmpty(dataSources.getString(i))) {
-        isReady = false;
-      }
-    }
-    this.outputDataSlots = new ArrayList<>();
-    this.nodeType = dagNodeInputDto.getNodeType();
-    this.nodeDescription = dagNodeInputDto.getNodeDescription();
-
-    if(isReady){
-      this.nodeState = DagNodeState.READY;
-    }else{
-      this.nodeState = DagNodeState.WAIT;
-    }
-
-    this.nodeDataResult = new String();
-
-  }
 
   @JSONField(serialize = false)
   public Integer getInputSlotSize() {
@@ -99,9 +66,6 @@ public class DagNode {
   public void setPreNodeId(int slotIndex, String preNodeId) {
     this.inputDataSlots[slotIndex].setPreNodeId(preNodeId);
   }
-
-
-
 
 
 
@@ -159,4 +123,10 @@ public class DagNode {
   public void clearOutputSlot() {
     this.outputDataSlots.clear();
   }
+
+  public boolean isSuccess(){
+    return this.getNodeState().isSuccess();
+  }
+
+
 }
