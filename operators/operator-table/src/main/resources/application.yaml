@@ -9,6 +9,12 @@ spring:
     name: operatorTableService
 
 
+rocketmq:
+  name-server: 60.204.208.219:9876
+  producer:
+    group: operatorResultGroup
+
+
 logging:
   level:
     com.bdilab: debug

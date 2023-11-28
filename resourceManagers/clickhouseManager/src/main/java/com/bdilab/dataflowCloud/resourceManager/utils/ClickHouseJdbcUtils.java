@@ -90,7 +90,7 @@ public class ClickHouseJdbcUtils {
    *
    */
   public boolean batchDeleteViews(List<String> viewNames){
-    String sql = "drop view ";
+    String sql = "DROP VIEW IF EXISTS  ";
     List<String> sqls = new ArrayList<>();
     for (String viewName : viewNames ) {
       sqls.add(sql+viewName);

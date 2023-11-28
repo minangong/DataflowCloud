@@ -25,6 +25,12 @@ spring:
     password: bdilab@1308
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+
+rocketmq:
+  name-server: 60.204.208.219:9876
+  producer:
+    group: operatorExecuteGroup
+
 logging:
   level:
     com.bdilab: info

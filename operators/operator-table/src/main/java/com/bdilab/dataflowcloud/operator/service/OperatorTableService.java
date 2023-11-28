@@ -23,10 +23,12 @@ public class OperatorTableService implements OperatorService<TableDescription> {
     ClickhouseManagerClient clickhouseManagerClient;
 
     @Override
-    public OperatorOutputData executeOperator(JSONObject jobDescription, String saveTableName, List<Object> extendMessage) throws Exception {
+    public OperatorOutputData executeOperator(JSONObject jobDescription, List<Object> extendMessage) throws Exception {
 
         TableDescription tableDescription = jobDescription.toJavaObject(TableDescription.class);
         // 将计算结果保存到ClickHouse
+
+        String saveTableName = tableDescription.getNodeDataResult();
         TableSqlGenerator tableSqlGenerator = new TableSqlGenerator(tableDescription);
 
         String sql = tableSqlGenerator.generateDataSourceSql();
@@ -38,5 +40,14 @@ public class OperatorTableService implements OperatorService<TableDescription> {
 
         OutputData outputData = new OutputData(data, clickhouseManagerClient.getTableMatadata(saveTableName), count);
         return new OperatorOutputData(OutputStateEnum.SUCCESS).setOutputData(outputData);
+    }
+
+    public void executeOperatorNoResponse(JSONObject jobDescription, List<Object> extendMessage) throws Exception {
+        TableDescription tableDescription = jobDescription.toJavaObject(TableDescription.class);
+        // 将计算结果保存到ClickHouse
+        String saveTableName = tableDescription.getNodeDataResult();
+        TableSqlGenerator tableSqlGenerator = new TableSqlGenerator(tableDescription);
+        String sql = tableSqlGenerator.generateDataSourceSql();
+        clickhouseManagerClient.createView(saveTableName,sql);
     }
 }

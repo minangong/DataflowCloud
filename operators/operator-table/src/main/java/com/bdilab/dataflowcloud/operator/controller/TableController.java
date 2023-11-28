@@ -21,10 +21,9 @@ public class TableController {
 
 
     @PostMapping("/execute")
-    public OperatorOutputData executeOperator(@RequestParam("jobDescription") String jobDescription,
-                                              @RequestParam("saveTableName") String saveTableName
+    public OperatorOutputData executeOperator(@RequestParam("jobDescription") String jobDescription
                                               ) throws Exception{
 
-        return operatorTableService.executeOperator(JSONObject.parseObject(jobDescription), saveTableName, new ArrayList<Object>());
+        return operatorTableService.executeOperator(JSONObject.parseObject(jobDescription), new ArrayList<Object>());
     }
 }

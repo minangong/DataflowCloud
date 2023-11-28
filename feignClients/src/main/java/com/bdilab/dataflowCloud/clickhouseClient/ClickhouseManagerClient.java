@@ -25,5 +25,5 @@ public interface ClickhouseManagerClient {
     public Map<String,String>  getTableMatadata(@RequestParam String tableName);
 
     @PostMapping("/batchDeleteViews")
-    public boolean batchDeleteViews(List<String> viewNames);
+    public boolean batchDeleteViews(@RequestParam("viewNames") List<String> viewNames);
 }

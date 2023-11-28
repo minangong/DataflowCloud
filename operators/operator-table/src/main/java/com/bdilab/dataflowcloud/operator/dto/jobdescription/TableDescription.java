@@ -23,8 +23,8 @@ public class TableDescription extends JobDescription {
    * All args constructor.
    *
    */
-  public TableDescription(String dataSource,String filter, String[] project, String[] group) {
-    super(new String[]{dataSource});
+  public TableDescription(String dataSource,String nodeDataResult,String filter, String[] project, String[] group) {
+    super(new String[]{dataSource},nodeDataResult);
     this.filter = filter;
     this.project = project;
     this.group = group;
@@ -38,6 +38,7 @@ public class TableDescription extends JobDescription {
     String[] project = json.getJSONArray("project").toArray(new String[]{});
     String[] group = json.getJSONArray("group").toArray(new String[]{});
     String dataSource = json.getString("dataSource");
-    return new TableDescription(dataSource,filter, project, group);
+    String nodeDataResult = json.getString("nodeDataResult");
+    return new TableDescription(dataSource,nodeDataResult,filter, project, group);
   }
 }

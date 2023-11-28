@@ -5,6 +5,7 @@ import com.bdilab.dataflowCloud.resourceManager.utils.ClickHouseJdbcUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class ClickhouseManagerController {
     }
 
     @PostMapping("/batchDeleteViews")
-    public boolean batchDeleteViews(List<String> viewNames){
+    public boolean batchDeleteViews(@RequestParam("viewNames") List<String> viewNames){
         return clickHouseJdbcUtils.batchDeleteViews(viewNames);
 
     }

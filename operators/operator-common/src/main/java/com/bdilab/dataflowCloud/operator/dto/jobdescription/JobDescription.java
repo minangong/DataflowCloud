@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class JobDescription {
     public String[] dataSource;
+    public String nodeDataResult;
 }

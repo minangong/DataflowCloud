@@ -61,7 +61,7 @@ public class DagNodeBuilder {
         }
         dagNode.outputDataSlots = new ArrayList<>();
         dagNode.nodeType = nodeType;
-        dagNode.nodeDescription = nodeDescription;
+
 
         if(isFromTable){
             dagNode.nodeState = DagNodeState.ALWAYS_SUCCEED;
@@ -69,7 +69,12 @@ public class DagNodeBuilder {
             dagNode.nodeState = DagNodeState.WAIT;
         }
 
-        dagNode.nodeDataResult = CommonConstants.DATABASE +"."+ CommonConstants.TEMP_TABLE_PREFIX + this.nodeId;
+        String result = CommonConstants.DATABASE +"."+ CommonConstants.TEMP_TABLE_PREFIX + this.nodeId;
+        dagNode.nodeDataResult = result;
+
+        ((JSONObject)nodeDescription).put("nodeDataResult",result);
+
+        dagNode.nodeDescription = nodeDescription;
 
         return dagNode;
 

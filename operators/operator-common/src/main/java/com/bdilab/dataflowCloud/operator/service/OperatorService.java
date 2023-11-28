@@ -15,11 +15,10 @@ public interface OperatorService<T extends JobDescription> {
      *          2. return the result (if...exist).
      *
      * @param jobDescription job Description
-     * @param saveTableName  table name for save
      * @param extendMessage extend message from dag
      * @author wh
      * @date 2022-04-30
      */
-    OperatorOutputData executeOperator(JSONObject jobDescription, String saveTableName, List<Object> extendMessage) throws Exception;
+    OperatorOutputData executeOperator(JSONObject jobDescription, List<Object> extendMessage) throws Exception;
 
 }
