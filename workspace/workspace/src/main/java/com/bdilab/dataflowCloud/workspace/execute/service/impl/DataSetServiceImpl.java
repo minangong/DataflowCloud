@@ -1,10 +1,10 @@
-package com.bdilab.dataflowCloud.workspace.exexute.service.impl;
+package com.bdilab.dataflowCloud.workspace.execute.service.impl;
 
 import com.bdilab.dataflowCloud.clickhouseClient.ClickhouseManagerClient;
 import com.bdilab.dataflowCloud.workspace.dag.pojo.Dag;
 import com.bdilab.dataflowCloud.workspace.dag.pojo.DagNode;
 import com.bdilab.dataflowCloud.workspace.dag.service.DagService;
-import com.bdilab.dataflowCloud.workspace.exexute.service.DataSetService;
+import com.bdilab.dataflowCloud.workspace.execute.service.DataSetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,14 @@ public class DataSetServiceImpl implements DataSetService {
 
     @Autowired
     DagService dagService;
+
+
+    @Override
+    public void createAlwaysSuccessView(String dataSource, String viewName) {
+        String sql = " select * from " + dataSource;
+        clickhouseManagerClient.createView(viewName,sql);
+    }
+
     @Override
     public void clearDagViews(String workspaceId) {
         List<String> viewNames = new ArrayList<>();
@@ -38,4 +46,5 @@ public class DataSetServiceImpl implements DataSetService {
         viewNames.add(viewName);
         clickhouseManagerClient.batchDeleteViews(viewNames);
     }
+
 }

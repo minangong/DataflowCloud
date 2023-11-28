@@ -6,14 +6,13 @@ import com.bdilab.dataflowCloud.workspace.dag.enums.DagNodeState;
 import com.bdilab.dataflowCloud.workspace.dag.pojo.*;
 import com.bdilab.dataflowCloud.workspace.dag.service.DagService;
 import com.bdilab.dataflowCloud.workspace.dag.utils.redis.RedisUtils;
-import com.bdilab.dataflowCloud.workspace.exexute.service.DataSetService;
+import com.bdilab.dataflowCloud.workspace.execute.service.DataSetService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * Operate dag services in Redis.
@@ -30,7 +29,6 @@ import java.util.List;
  *    dirty read, which means the read will also be locked !!
  *
  * @author wh
- * @date 2021/4/9
  */
 @Slf4j
 @Service
@@ -40,10 +38,12 @@ public class DagServiceImpl implements DagService {
   @Autowired
   DataSetService dataSetService;
 
-
   @Override
   public boolean addNode(String workspaceId, DagNodeBuilder dagNodeBuilder) {
     DagNode dagNode = dagNodeBuilder.build();
+    if(dagNode.getNodeState().equals(DagNodeState.ALWAYS_SUCCEED)){
+      dataSetService.createAlwaysSuccessView(dagNode.getInputDataSource(0),dagNode.getNodeDataResult());
+    }
     redisUtils.hset(workspaceId,dagNode.getNodeId(),dagNode);
     log.info("Add node [{}] to [{}].", dagNode.getNodeId(), workspaceId);
     return true;
