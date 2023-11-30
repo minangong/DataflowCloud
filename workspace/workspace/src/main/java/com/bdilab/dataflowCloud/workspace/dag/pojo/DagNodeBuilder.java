@@ -7,13 +7,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.bdilab.dataflowCloud.workspace.dag.consts.CommonConstants;
 import com.bdilab.dataflowCloud.workspace.dag.enums.DagNodeState;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 
 @AllArgsConstructor
+@Slf4j
 public class DagNodeBuilder {
     private String nodeId;
     private String nodeType;
@@ -77,10 +76,9 @@ public class DagNodeBuilder {
         dagNode.nodeDescription = nodeDescription;
 
         return dagNode;
-
     }
 
-    protected static DagNode convertNode(Object v) {
+    public static DagNode convertNode(Object v) {
         if (v == null) {
             return null;
         }

@@ -2,6 +2,7 @@ package com.bdilab.dataflowCloud.workspace.dag.service.impl;
 
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.bdilab.dataflowCloud.workspace.dag.enums.DagNodeState;
 import com.bdilab.dataflowCloud.workspace.dag.pojo.*;
 import com.bdilab.dataflowCloud.workspace.dag.service.DagService;
@@ -44,6 +45,7 @@ public class DagServiceImpl implements DagService {
     if(dagNode.getNodeState().equals(DagNodeState.ALWAYS_SUCCEED)){
       dataSetService.createAlwaysSuccessView(dagNode.getInputDataSource(0),dagNode.getNodeDataResult());
     }
+    //log.info(dagNode.toString());
     redisUtils.hset(workspaceId,dagNode.getNodeId(),dagNode);
     log.info("Add node [{}] to [{}].", dagNode.getNodeId(), workspaceId);
     return true;
@@ -106,6 +108,9 @@ public class DagServiceImpl implements DagService {
     DagNode preNode = dag.getDagNode(preNodeId);
     DagNode nextNode = dag.getDagNode(nextNodeId);
 
+    if(preNode.getOutputDataSlots().contains(new OutputDataSlot(nextNodeId,slotIndex))){
+      return true;
+    }
     //增加边信息
     preNode.getOutputDataSlots().add(new OutputDataSlot(nextNodeId, slotIndex));
     nextNode.setPreNodeId(slotIndex, preNodeId);
@@ -153,7 +158,7 @@ public class DagServiceImpl implements DagService {
 
   @Override
   public DagNode getNode(String workspaceId, String nodeId) {
-    return (DagNode) redisUtils.hget(workspaceId, nodeId);
+    return DagNodeBuilder.convertNode(redisUtils.hget(workspaceId, nodeId));
   }
   @Override
   public Dag getDag(String workspaceId) {

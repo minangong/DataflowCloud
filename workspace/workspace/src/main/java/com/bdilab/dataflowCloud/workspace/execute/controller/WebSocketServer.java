@@ -65,7 +65,7 @@ public class WebSocketServer {
     if (message.length() > 300) {
       message = message.substring(0, 300);
     }
-    log.info("Send message to session of workspace: {}. The message: {}", workspaceId, message);
+    //log.info("Send message to session of workspace: {}. The message: {}", workspaceId, message);
   }
 
   /**

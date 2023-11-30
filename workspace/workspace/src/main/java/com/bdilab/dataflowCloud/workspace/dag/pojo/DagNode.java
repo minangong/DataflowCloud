@@ -8,6 +8,7 @@ import lombok.Data;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -69,18 +70,6 @@ public class DagNode {
 
 
 
-
-  @JSONField(serialize = false)
-  public boolean isHeadNode() {
-    InputDataSlot[] inputDataSlots = getInputDataSlots();
-    for (InputDataSlot inputDataSlot : inputDataSlots) {
-      if (!StringUtils.isEmpty(inputDataSlot.getPreNodeId())) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   @JSONField(serialize = false)
   public String getInputDataSource(int slotIndex) {
     return this.inputDataSlots[slotIndex].getDataSource();
@@ -124,9 +113,42 @@ public class DagNode {
     this.outputDataSlots.clear();
   }
 
+  @JSONField(serialize = false)
   public boolean isSuccess(){
     return this.getNodeState().isSuccess();
   }
+
+  @JSONField(serialize = false)
+  public boolean isAlwaysSuccess(){
+    return this.getNodeState().isAlwaysSuccess();
+  }
+  @JSONField(serialize = false)
+
+  public boolean isFailed(){
+    return this.getNodeState().isFailed();
+  }
+
+  @JSONField(serialize = false)
+  public boolean isWait(){
+    return this.getNodeState().isWait();
+  }
+
+  @JSONField(serialize = false)
+  public boolean isReady(){
+    return this.getNodeState().isReady();
+  }
+
+//  @JSONField(serialize = false)
+//  public boolean isHeadNode() {
+//    InputDataSlot[] inputDataSlots = getInputDataSlots();
+//    for (InputDataSlot inputDataSlot : inputDataSlots) {
+//      if (!StringUtils.isEmpty(inputDataSlot.getPreNodeId())) {
+//        return false;
+//      }
+//    }
+//    return true;
+//  }
+
 
 
 }

@@ -32,10 +32,13 @@ public class TableConsumer implements RocketMQListener<String> {
 
     @Override
     public void onMessage(String s) {
-        String[] strs = s.split("#");
-        String workspaceId = strs[0];
-        String operatorId = strs[1];
-        String desc = strs[2];
+        JSONObject jsonObject = JSONObject.parseObject(s);
+
+        String workspaceId = jsonObject.getString("workspaceId");
+        String operatorId = jsonObject.getString("operatorId");
+        String desc = jsonObject.getString("NodeDescription");
+
+        log.info("get desc:  " + desc);
         JSONObject result = new JSONObject();
         result.put("workspaceId",workspaceId);
         result.put("operatorId",operatorId);

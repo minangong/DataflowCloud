@@ -15,6 +15,9 @@ public class DagStateProxy {
 
 
   public Dag checkIfReady(DagNode node){
+    if(node.getNodeState().isReady()){
+      return dag;
+    }
     List<DagNode> preNodes = dag.getPreNodes(node.getNodeId());
 
     for(DagNode preNode : preNodes){

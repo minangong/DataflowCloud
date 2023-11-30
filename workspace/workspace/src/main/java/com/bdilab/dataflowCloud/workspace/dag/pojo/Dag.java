@@ -87,21 +87,26 @@ public class Dag {
     return preNodes;
   }
 
-  public List<DagNode> getHeadNodes() {
-    return dagMap.values().stream().filter(DagNode::isHeadNode).collect(Collectors.toList());
+
+  public List<DagNode> getAlwaysSuccessNodes() {
+    return dagMap.values().stream().filter(DagNode::isAlwaysSuccess).collect(Collectors.toList());
   }
 
-  /**
-   * Is head node or not.
-   *
-   * @param nodeId node ID
-   */
-  public boolean isHeadNode(String nodeId) {
-    return getDagNode(nodeId).isHeadNode();
-  }
 
-  public Integer size() {
-    return dagMap.size();
-  }
+//  public List<DagNode> getHeadNodes() {
+//    return dagMap.values().stream().filter(DagNode::isHeadNode).collect(Collectors.toList());
+//  }
+//  /**
+//   * Is head node or not.
+//   *
+//   * @param nodeId node ID
+//   */
+//  public boolean isHeadNode(String nodeId) {
+//    return getDagNode(nodeId).isHeadNode();
+//  }
+//
+//  public Integer size() {
+//    return dagMap.size();
+//  }
 
 }

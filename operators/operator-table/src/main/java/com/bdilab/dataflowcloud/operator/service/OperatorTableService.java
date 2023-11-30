@@ -43,11 +43,15 @@ public class OperatorTableService implements OperatorService<TableDescription> {
     }
 
     public void executeOperatorNoResponse(JSONObject jobDescription, List<Object> extendMessage) throws Exception {
+        log.info("job desc: " + jobDescription );
         TableDescription tableDescription = jobDescription.toJavaObject(TableDescription.class);
         // 将计算结果保存到ClickHouse
         String saveTableName = tableDescription.getNodeDataResult();
         TableSqlGenerator tableSqlGenerator = new TableSqlGenerator(tableDescription);
         String sql = tableSqlGenerator.generateDataSourceSql();
+
+
+        log.info("saveTableName: "+ saveTableName +",sql: "+sql);
         clickhouseManagerClient.createView(saveTableName,sql);
     }
 }
