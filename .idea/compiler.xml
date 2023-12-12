@@ -21,7 +21,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="DataflowCloud" options="-parameters" />
+      <module name="DataflowCloud" options="" />
       <module name="FeignClients" options="-parameters" />
       <module name="clickhouseManager" options="-parameters" />
       <module name="common" options="-parameters" />

@@ -16,6 +16,7 @@
     <module>operators/operator-common</module>
     <module>resourceManagers/clickhouseManager</module>
     <module>feignClients</module>
+    <module>workspace/workspace</module>
   </modules>
 
   <parent>
