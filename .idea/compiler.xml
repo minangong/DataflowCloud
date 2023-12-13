@@ -12,6 +12,7 @@
         <module name="operator-table" />
         <module name="workspace" />
         <module name="operator-common" />
+        <module name="gateWay" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -26,6 +27,7 @@
       <module name="clickhouseManager" options="-parameters" />
       <module name="common" options="-parameters" />
       <module name="feignClients" options="-parameters" />
+      <module name="gateWay" options="-parameters" />
       <module name="operator-common" options="-parameters" />
       <module name="operator-table" options="-parameters" />
       <module name="workspace" options="-parameters" />

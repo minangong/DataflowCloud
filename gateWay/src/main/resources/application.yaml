@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateWay
+  cloud:
+    nacos:
+      server-addr: 60.204.208.219:80
+    gateway:
+      routes:
+        - id: workspaceService
+          uri: lb://workspaceService
+          predicates:
+            - Path=/dataflow/workspace/**,/dataflow/gluttony/**,/webSocket/**
+logging:
+  level:
+    com.bdilab: info
+  pattern:
+    dateformat: MM-dd HH:mm:ss:SSS

@@ -17,6 +17,7 @@
     <module>resourceManagers/clickhouseManager</module>
     <module>feignClients</module>
     <module>workspace/workspace</module>
+    <module>gateWay</module>
   </modules>
 
   <parent>
